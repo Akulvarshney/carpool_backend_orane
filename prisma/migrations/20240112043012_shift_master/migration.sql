@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "ShiftsMaster" ALTER COLUMN "StartTime" SET DATA TYPE TEXT,
+ALTER COLUMN "EndTime" SET DATA TYPE TEXT;

@@ -1,0 +1,19 @@
+model Maintenance {
+  maintenanceId         String    @id 
+  sap_maintenance_id   String?      @unique
+  vehicle               Vehicle   @relation(fields: [vehicleId], references: [vehicle_id])
+  vehicleId             String
+  maintenance_type      String   
+  city                  String    
+  maintenance_date      DateTime
+  maintenance_time      DateTime
+  maintenance_message   String    
+  maintenance_status    String    
+}
+
+
+{/* <View style={styles.Box}>
+     <Text>10 min</Text>
+   </View> */}
+
+                {/* <Entypo name="location" size={20} color={bgColor} /> */}
