@@ -48,6 +48,7 @@ const addDriver = async (req, res, next) => {
         emailId: email,
         password: hashedPassword,
         role: "driver",
+        phone_number: phoneNumber || null,
         created_on: new Date(),
       },
     });

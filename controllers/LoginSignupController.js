@@ -10,11 +10,22 @@ const login = async (req, res) => {
   try {
     let { emailId, password } = req.body;
 
-    // console.log(emailId, password);
+    console.log(emailId, password);
 
     emailId = emailId.toLowerCase();
 
-    const user = await prisma.auth.findUnique({ where: { emailId } });
+    const user = await prisma.auth.findFirst({
+      where: {
+        OR: [
+          {
+            emailId: emailId,
+          },
+          {
+            phone_number: emailId,
+          },
+        ],
+      },
+    });
 
     // console.log("asdasd", user);
 
@@ -95,7 +106,7 @@ const login = async (req, res) => {
 };
 
 const signupEmpMan = async (req, res, next) => {
-  let { emailId, password, role } = req.body;
+  let { emailId, password, role, phone_number } = req.body;
 
   emailId = emailId.toLowerCase();
 
@@ -132,6 +143,7 @@ const signupEmpMan = async (req, res, next) => {
         emailId,
         password: hashedPassword,
         created_on: createdOn,
+        phone_number,
         role,
       },
     });

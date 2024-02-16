@@ -34,8 +34,6 @@ const generateTripRequestExcelReport = async (req, res) => {
       },
     });
 
-    console.log("000000000", tripRequests[0]);
-
     if (tripRequests.length === 0) {
       return res.status(404).send("No trip requests found");
     }

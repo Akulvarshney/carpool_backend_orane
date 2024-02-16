@@ -234,9 +234,8 @@ const fetchTripsWithStatus = async (req, res) => {
 const updateStatus = async (req, res) => {
   try {
     const { tripId } = req.params;
-    const { newStatus } = req.body;
+    const { newStatus, cancelReason } = req.body;
 
-    // Fetch the TripRequest from the database
     const tripRequest = await prisma.tripRequest.findUnique({
       where: { trip_id: tripId },
     });
@@ -245,10 +244,15 @@ const updateStatus = async (req, res) => {
       return res.status(404).json({ error: "TripRequest not found" });
     }
 
-    // Update the status
+    let updateData = { status: newStatus };
+
+    if (newStatus === "Cancelled") {
+      updateData.cancel_Reason = cancelReason;
+    }
+
     const updatedTripRequest = await prisma.tripRequest.update({
       where: { trip_id: tripId },
-      data: { status: newStatus },
+      data: updateData,
     });
 
     res.json(updatedTripRequest);

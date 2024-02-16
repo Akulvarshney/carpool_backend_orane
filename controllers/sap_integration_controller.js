@@ -229,6 +229,7 @@ const importDriverSap = async (req, res) => {
             emailId: driverData.emailId,
             password: hashedPassword,
             role: lowerCaseRole,
+            phone_number: driverData?.mobile_number || null,
           },
         });
 

@@ -14,6 +14,7 @@ model Auth {
   authentication_id String   @id
   emailId           String   @unique
   password          String
+  phone_number      String?  @unique
   created_on        DateTime @default(now())
   updated_at        DateTime @default(now())
   role              String
@@ -21,6 +22,7 @@ model Auth {
   drivers           Driver?
   first_time        Boolean  @default(false)
 }
+
 
 model PlantMaster {
   plant_uuid_id   String            @id
@@ -153,6 +155,7 @@ model TripRequest {
   status               String       @default("Pending")
   feedback_message     String?
   comments             String?
+  cancel_Reason       String?
   rating               Int?
   approved_by_manager  Boolean?
   assigned_car         Vehicle?     @relation(fields: [assigned_car_id], references: [vehicle_id])

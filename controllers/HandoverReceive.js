@@ -126,7 +126,7 @@ const createHandoverTransaction = async (req, res) => {
 
     if (toDriver && toDriver.current_vehicle) {
       res
-        .status(500)
+        .status(200)
         .json({ message: "To Driver already has a current vehicle" });
       return;
     }
@@ -138,7 +138,7 @@ const createHandoverTransaction = async (req, res) => {
 
     if (!fromDriver || !fromDriver.current_vehicle) {
       res
-        .status(500)
+        .status(200)
         .json({ message: "From Driver does not have a current vehicle" });
       return;
     }
@@ -153,7 +153,7 @@ const createHandoverTransaction = async (req, res) => {
     });
 
     if (existingPendingHandover) {
-      res.status(500).json({
+      res.status(200).json({
         message: "Either from_driver_id or to_driver_id has a pending handover",
       });
       return;
