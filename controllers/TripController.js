@@ -10,6 +10,8 @@ const allUsers = async (req, res) => {
         user_id: true,
         name: true,
         profile_image: true,
+        sap_user_id: true,
+        designation: true,
       },
     });
 
@@ -46,11 +48,27 @@ const requestTrip = async (req, res) => {
     const trip_id = uuidv4();
     const random4DigitNumber = Math.floor(1000 + Math.random() * 9000);
 
+    const generateRequestNumber = async () => {
+      const lastRequest = await prisma.tripRequest.findFirst({
+        orderBy: { request_number: "desc" },
+      });
+
+      const lastRequestNumber = lastRequest?.request_number || "FR9999";
+
+      const numericPart = Number(lastRequestNumber.slice(2)) + 1;
+      const newNumericPart = String(numericPart).padStart(4, "0");
+
+      return `FR${newNumericPart}`;
+    };
+
+    const newRequestNumber = await generateRequestNumber();
+
     const newTripRequest = await prisma.tripRequest.create({
       data: {
         trip_id,
         plant_uuid_id,
         user_id,
+        request_number: newRequestNumber,
         vehicle_type,
         purpose: purpose || null,
         department: department || null,
@@ -92,11 +110,11 @@ const requestTrip = async (req, res) => {
 const approveByManager = async (req, res) => {
   try {
     const { tripId } = req.params;
-    const { approvedByManager } = req.body;
+    const { approvedByManager, updated_by } = req.body;
 
     const updatedTripRequest = await prisma.tripRequest.update({
       where: { trip_id: tripId },
-      data: { approved_by_manager: approvedByManager },
+      data: { approved_by_manager: approvedByManager, updated_by: updated_by },
     });
 
     res.status(200).json(updatedTripRequest);
@@ -119,7 +137,10 @@ const recentTripUserId = async (req, res) => {
         user_id,
       },
       include: {
-        user: true, // Include user information
+        user: true,
+      },
+      orderBy: {
+        request_number: "desc",
       },
     });
 
@@ -300,11 +321,28 @@ const approvingTrip = async (req, res) => {
   const { tripId, assignedDriverId, assignedCarId } = req.body;
 
   try {
+    const generateAssignmentNumber = async () => {
+      const lastRequest = await prisma.tripRequest.findFirst({
+        orderBy: { assignment_number: "desc" },
+      });
+
+      const lastRequestNumber = lastRequest?.assignment_number || "AN9999";
+
+      const numericPart = Number(lastRequestNumber.slice(2)) + 1;
+      const newNumericPart = String(numericPart).padStart(4, "0");
+
+      return `AN${newNumericPart}`;
+    };
+
+    const newAssignmentNumber = generateAssignmentNumber();
+    console.log(newAssignmentNumber);
+
     const updatedTrip = await prisma.tripRequest.update({
       where: { trip_id: tripId },
       data: {
         assigned_driver_id: assignedDriverId,
         assigned_car_id: assignedCarId,
+        assignment_number: newAssignmentNumber,
         status: "Assigned",
       },
     });
@@ -412,7 +450,9 @@ const getTripForDriver = async (req, res) => {
 
 const fleetAssigningTrips = async (req, res) => {
   try {
-    const { plantId } = req.body;
+    const { plantId, status } = req.body;
+
+    console.log(plantId);
 
     let queryOptions = {
       where: {
@@ -428,6 +468,25 @@ const fleetAssigningTrips = async (req, res) => {
       queryOptions.where.plant_uuid_id = plantId;
     }
 
+    if (status) {
+      switch (status) {
+        case "Assigned":
+          queryOptions.where.status = {
+            notIn: ["Completed", "Cancelled", "Requested"],
+          };
+          break;
+        case "Completed":
+        case "Cancelled":
+        case "Requested":
+          queryOptions.where.status = status;
+          break;
+        default:
+          // Handle invalid status here
+          res.status(400).json({ error: "Invalid status provided" });
+          return;
+      }
+    }
+
     const approvedTrips = await prisma.tripRequest.findMany(queryOptions);
 
     res.status(200).json(approvedTrips);
@@ -439,10 +498,12 @@ const fleetAssigningTrips = async (req, res) => {
 
 const findAvailableVehicle2 = async (req, res) => {
   try {
-    const { start_time, end_time } = req.body;
+    const { start_time, end_time, plantId } = req.body;
 
     const availableVehicles = await prisma.vehicle.findMany({
       where: {
+        plant_uuid_id: plantId,
+        vehicle_status: "Available",
         tripRequest: {
           none: {
             OR: [
@@ -462,7 +523,6 @@ const findAvailableVehicle2 = async (req, res) => {
       },
     });
 
-    // Fetch trips for each available vehicle for the particular day
     const vehiclesWithTrips = await Promise.all(
       availableVehicles.map(async (vehicle) => {
         const vehicleWithDriver = await prisma.vehicle.findUnique({
@@ -474,16 +534,19 @@ const findAvailableVehicle2 = async (req, res) => {
           },
         });
 
+        const receivedStartDateTime = new Date("2024-03-04T15:17:00.000Z");
+        const receivedStartDate = new Date(
+          receivedStartDateTime.toISOString().split("T")[0]
+        );
+
+        console.log(vehicleWithDriver?.current_drivers?.driver_id);
+
         const vehicleTrips = await prisma.tripRequest.findMany({
           where: {
-            assigned_driver_id: vehicle.current_drivers?.driver_id,
+            assigned_driver_id: vehicleWithDriver?.current_drivers?.driver_id,
             start_time: {
-              lte: end_time,
-              gte: start_time,
-            },
-            end_time: {
-              gte: start_time,
-              lte: end_time,
+              gte: receivedStartDate,
+              lt: new Date(receivedStartDate.getTime() + 24 * 60 * 60 * 1000),
             },
           },
         });
@@ -503,12 +566,36 @@ const assignedVehicle = async (req, res) => {
   const { tripId, assignedCarId, assignedDriverId } = req.body;
 
   try {
-    console.log(tripId, assignedCarId);
+    const generateAssignmentNumber = async () => {
+      const latestNonNullTripRequest = await prisma.tripRequest.findFirst({
+        where: {
+          assignment_number: { not: null },
+        },
+        orderBy: {
+          assignment_number: "desc",
+        },
+      });
+
+      console.log(latestNonNullTripRequest?.assignment_number);
+
+      const lastRequestNumber =
+        latestNonNullTripRequest?.assignment_number || "AN9999";
+
+      const numericPart = Number(lastRequestNumber.slice(2)) + 1;
+      const newNumericPart = String(numericPart).padStart(4, "0");
+
+      return `AN${newNumericPart}`;
+    };
+
+    const newAssignmentNumber = await generateAssignmentNumber();
+    console.log(newAssignmentNumber);
+
     const updatedTripRequest = await prisma.tripRequest.update({
       where: { trip_id: tripId },
       data: {
         assigned_car_id: assignedCarId,
         assigned_driver_id: assignedDriverId,
+        assignment_number: newAssignmentNumber,
         status: "Assigned",
       },
     });

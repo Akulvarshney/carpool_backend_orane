@@ -231,6 +231,7 @@ const fetchUserDetailUserId = async (req, res) => {
         include: {
           current_vehicle: true,
           shift: true,
+          authentication: true,
         },
       });
       userDetails = { ...userDetails, role: "driver" };
@@ -238,6 +239,9 @@ const fetchUserDetailUserId = async (req, res) => {
       userDetails = await prisma.users.findUnique({
         where: {
           user_id,
+        },
+        include: {
+          authentication: true,
         },
       });
     }
@@ -255,9 +259,9 @@ const fetchUserDetailUserId = async (req, res) => {
 
 const firstTimePassword = async (req, res) => {
   const { authentication_id, password } = req.body;
+  console.log(authentication_id, password);
 
   try {
-    // Check if authentication_id is present
     const existingAuth = await prisma.auth.findUnique({
       where: { authentication_id },
     });
@@ -266,10 +270,8 @@ const firstTimePassword = async (req, res) => {
       return res.status(404).json({ error: "Authentication ID not found" });
     }
 
-    // Hash the new password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Update password and set firstTime to true
     await prisma.auth.update({
       where: { authentication_id },
       data: {

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+
+        margin: 0;
+        padding: 20px;
+      }
+
+      .myComponent {
+        justify-content: center;
+        display: flex;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 80%;
+        margin: 20px auto;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      .border {
+        padding: 20px;
+        border: double green;
+      }
+
+      .underlineStyle {
+        text-decoration: underline;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .Row {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 500;
+      }
+
+      .inputFieldsshort {
+        margin: 0px 0px 0px 7px;
+        padding: 0;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 400;
+        font-family: "Hind", sans-serif;
+        background: #fff;
+        border-bottom: 1px solid #ccc;
+        /* width: 20%; */
+        border-top: 0px;
+        border-left: 0px;
+        border-right: 0px;
+        outline: 0;
+        text-transform: capitalize !important;
+      }
+
+      .text {
+        color: black;
+        font-weight: 500;
+      }
+
+      .RowText {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 500;
+        color: black;
+      }
+
+      .Heading {
+        font-size: 20px;
+        color: black;
+        font-weight: 700;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <div class="main" style="">
+        <div style="padding: 20px; border: double #ccc">
+          <div class="myComponent">
+            <img
+              style="width: 60px; aspect-ratio: 1"
+              src="https://firebasestorage.googleapis.com/v0/b/carpool-orane.appspot.com/o/logo.png?alt=media&token=5876ac2f-ea44-4ea1-9374-63e151120439"
+              alt="Ethiopian Electric Power"
+            />
+          </div>
+          <div class="Heading" style="padding: 20px">
+            VEHICLE HANDOVER SHEET
+          </div>
+          <div class="RowText">
+            <div>
+              <div>
+                Date :
+                <span style="color: black"
+                  ><b><u> {{date}}</u></b></span
+                >
+              </div>
+              <div>
+                Time :
+                <span style="color: black"
+                  ><b><u> {{time}}</u></b></span
+                >
+              </div>
+              <div>
+                Location :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+            </div>
+            <div>
+              <div>
+                Vehicle License Plate :
+                <span style="color: black"
+                  ><b><u> {{vehicle}}</u></b></span
+                >
+              </div>
+              <div>
+                Fuel Reading :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+              <div>
+                Odometer Reading :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+            </div>
+          </div>
+          <div style="padding-top: 30px; padding-bottom: 30px; color: black">
+            I Affirmed that I had received the above-mentioned Vehicle is in
+            Good Working Condition
+          </div>
+          <div class="RowText">
+            <div>
+              <div>Person Releasing Vehicle</div>
+              <div>
+                Driver ID :
+                <span style="color: black"
+                  ><b><u> {{fromDriverId}}</u></b></span
+                >
+              </div>
+              <div>
+                Name :
+                <span style="color: black"
+                  ><b><u> {{fromDriver}}</u></b></span
+                >
+              </div>
+              <div>
+                Position :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+              <div>
+                Signature :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+            </div>
+            <div>
+              <div>Person Receiving Vehicle</div>
+              <div>
+                Driver ID :
+                <span style="color: black"
+                  ><b><u> {{toDriverId}}</u></b></span
+                >
+              </div>
+              <div>
+                Name :
+                <span style="color: black"
+                  ><b><u> {{toDriver}}</u></b></span
+                >
+              </div>
+              <div>
+                Position :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+              <div>
+                Signature :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              color: black;
+              font-weight: 500;
+              padding-top: 30px;
+              padding-bottom: 30px;
+            "
+          >
+            Tyre Details
+          </div>
+          <div class="RowText">
+            <div>
+              <div>
+                Total No. of Tyre:
+                <input style="width: 80; margin-left: 20px" name="clauseH" />
+              </div>
+              <div>
+                Front/Real Tyre :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+              <div>
+                Front/Real Tyre :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+              <div>
+                Front/Real Tyre :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+            </div>
+            <div>
+              <div>Reserve Tyre: Yes/No</div>
+              <div>
+                Front/Real Tyre :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+              <div>
+                Front/Real Tyre :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+              <div>
+                Front/Real Tyre :
+                <input class="inputFieldsshort" name="clauseH" />
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              color: black;
+              font-weight: 500;
+              padding-top: 30px;
+              padding-bottom: 30px;
+            "
+          >
+            Remarks :
+            <input style="width: 90%" class="inputFieldsshort" name="clauseH" />
+          </div>
+          <div style="font-weight: 500; display: flex; gap: 10px">
+            <div style="color: black">Note:</div>
+            <div>
+              By signing this form the recipient of the vehicle confirms that
+              they have conducted a daily check and that both themselves and the
+              person releasing the vehicle have signed
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

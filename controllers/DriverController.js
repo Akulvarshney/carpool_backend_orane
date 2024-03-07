@@ -21,6 +21,7 @@ const addDriver = async (req, res, next) => {
       experience,
       profile_image,
       shift_id,
+      driver_type,
       driver_employee_id,
       dob,
     } = req.body;
@@ -41,11 +42,12 @@ const addDriver = async (req, res, next) => {
     }
 
     const hashedPassword = await bcrypt.hash("Carpool123", 10);
+    const newEmail = email?.toLowerCase();
 
     const newUser = await prisma.auth.create({
       data: {
         authentication_id: authId,
-        emailId: email,
+        emailId: newEmail,
         password: hashedPassword,
         role: "driver",
         phone_number: phoneNumber || null,
@@ -61,6 +63,7 @@ const addDriver = async (req, res, next) => {
         emailId: email,
         vehicle_type: vehicle_type || null,
         name: name || null,
+        driver_type: driver_type || null,
         mobile_number: phoneNumber || null,
         location: location || null,
         city: city || null,
@@ -93,7 +96,11 @@ const addDriver = async (req, res, next) => {
 
 const fetchDriverList = async (req, res) => {
   try {
+    const { plantId } = req.params;
     const drivers = await prisma.driver.findMany({
+      where: {
+        plant_uuid_id: plantId,
+      },
       include: {
         current_vehicle: true,
         shift: true,
@@ -108,18 +115,25 @@ const fetchDriverList = async (req, res) => {
 
 const fetchAllUnlinkedVehicle = async (req, res) => {
   try {
+    const { plantId } = req.params;
+
     const linkedVehicleIds = await prisma.driver.findMany({
       select: { current_vehicle_id: true },
-      where: { current_vehicle_id: { not: null } },
+      where: { current_vehicle_id: { not: null }, plant_uuid_id: plantId },
     });
 
     const unassignedVehicles = await prisma.vehicle.findMany({
       where: {
-        NOT: {
-          vehicle_id: {
-            in: linkedVehicleIds.map((driver) => driver.current_vehicle_id),
+        plant_uuid_id: plantId,
+        AND: [
+          {
+            NOT: {
+              vehicle_id: {
+                in: linkedVehicleIds.map((driver) => driver.current_vehicle_id),
+              },
+            },
           },
-        },
+        ],
       },
     });
 

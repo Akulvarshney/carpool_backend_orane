@@ -5,13 +5,20 @@ const { v4: uuidv4, validate: isUuid } = require("uuid");
 
 const addShift = async (req, res) => {
   try {
-    let { StartTime, EndTime, Shift_name, sap_shift_id } = req.body;
+    let {
+      StartTime,
+      EndTime,
+      Shift_name,
+      sap_shift_id,
+      Validity_Start,
+      Validity_End,
+    } = req.body;
 
     Shift_name = Shift_name.toUpperCase();
 
     const existingShift = await prisma.shiftsMaster.findFirst({
       where: {
-        OR: [{ Shift_name }, { StartTime }, { sap_shift_id }],
+        OR: [{ Shift_name }, { StartTime }],
       },
     });
 
@@ -28,6 +35,8 @@ const addShift = async (req, res) => {
         StartTime,
         EndTime,
         Shift_name,
+        Validity_Start,
+        Validity_End,
         sap_shift_id,
       },
     });
@@ -41,9 +50,7 @@ const addShift = async (req, res) => {
 
 const shiftList = async (req, res) => {
   try {
-    // Fetch all plants from the PlantMaster table
     const shiftList = await prisma.shiftsMaster.findMany();
-
     res.status(200).json(shiftList);
   } catch (error) {
     console.error(error);

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,40 +11,41 @@ model Auth {
   authentication_id String   @id
   emailId           String   @unique
   password          String
-  phone_number      String?  @unique
   created_on        DateTime @default(now())
-  updated_at        DateTime @default(now())
   role              String
-  users             Users?
-  drivers           Driver?
   first_time        Boolean  @default(false)
+  updated_at        DateTime @default(now())
+  phone_number      String?  @unique
+  drivers           Driver?
+  users             Users?
 }
-
 
 model PlantMaster {
   plant_uuid_id   String            @id
-  sap_plant_id    String?           @unique
   plant_name      String
+  sap_plant_id    String?           @unique
   drivers         Driver[]
+  handoverReceive HandoverReceive[]
   tripRequest     TripRequest[]
   users           Users[]
-  handoverReceive HandoverReceive[]
+  vehicles        Vehicle[]
 }
 
 model ShiftsMaster {
-  Shift_ID     String   @id
-  sap_shift_id String?  @unique
-  StartTime    String
-  EndTime      String
-  Shift_name   String
-  drivers      Driver[]
+  Shift_ID       String    @id
+  StartTime      String
+  EndTime        String
+  Shift_name     String
+  sap_shift_id   String?   @unique
+  Validity_End   DateTime?
+  Validity_Start DateTime?
+  drivers        Driver[]
 }
 
 model Users {
   user_id           String        @id
-  sap_user_id       String?       @unique
-  authentication    Auth          @relation(fields: [authentication_id], references: [authentication_id])
   authentication_id String        @unique
+  sap_Manger_id     String?      
   name              String        @db.VarChar(255)
   address           String?       @db.VarChar(255)
   triprequested     Int           @default(0)
@@ -57,15 +55,16 @@ model Users {
   mobile_number     String?       @db.VarChar(15)
   role              String?       @db.VarChar(50)
   created_on        DateTime      @default(now())
-  updated_at        DateTime      @default(now())
-  plant_uuid        PlantMaster?  @relation(fields: [plant_uuid_id], references: [plant_uuid_id])
   plant_uuid_id     String?
+  sap_user_id       String?       @unique
+  updated_at        DateTime      @default(now())
   tripRequest       TripRequest[]
+  authentication    Auth          @relation(fields: [authentication_id], references: [authentication_id])
+  plant_uuid        PlantMaster?  @relation(fields: [plant_uuid_id], references: [plant_uuid_id])
 }
 
 model VehicleOwner {
   vehicle_owner_id    String    @id
-  sap_vehicleOwner_id String?   @unique
   owner_name          String
   sex                 String?
   phone_number        String?
@@ -73,33 +72,34 @@ model VehicleOwner {
   state               String?
   city                String?
   address             String?
+  sap_vehicleOwner_id String?   @unique
   created_on          DateTime  @default(now())
   updated_at          DateTime  @default(now())
-  cars                Vehicle[]
   buses               Bus[]
+  cars                Vehicle[]
 }
 
 model Vehicle {
   vehicle_id          String            @id
-  sap_vehicle_id      String?           @unique
   vehicle_plate       String            @unique
   vehicle_type        String            @db.VarChar(50)
   vehicle_description String?           @db.VarChar(255)
-  vehicle_owner       VehicleOwner?     @relation(fields: [vehicle_owner_id], references: [vehicle_owner_id])
+  plant_uuid_id       String?           @db.VarChar(255)
   vehicle_owner_id    String?
+  vehicle_status      String?           @default("Available")
+  sap_vehicle_id      String?           @unique
   created_on          DateTime          @default(now())
   updated_at          DateTime          @default(now())
-  vehicle_status      String?           @default("Available")
-  tripRequest         TripRequest[]
-  vehicleHandover     VehicleHandover[]
-  handoverReceive     HandoverReceive[]
   current_drivers     Driver?
+  handoverReceive     HandoverReceive[]
+  tripRequest         TripRequest[]
+  plant_uuid          PlantMaster?      @relation(fields: [plant_uuid_id], references: [plant_uuid_id])
+  vehicle_owner       VehicleOwner?     @relation(fields: [vehicle_owner_id], references: [vehicle_owner_id])
+  vehicleHandover     VehicleHandover[]
 }
 
 model Driver {
   driver_id          String            @id
-  sap_driver_id      String?           @unique
-  authentication     Auth              @relation(fields: [authentication_id], references: [authentication_id])
   authentication_id  String            @unique
   emailId            String
   vehicle_type       String[]
@@ -109,7 +109,6 @@ model Driver {
   city               String?
   state              String?
   sex                String?
-  plant_uuid         PlantMaster?      @relation(fields: [plant_uuid_id], references: [plant_uuid_id])
   plant_uuid_id      String?
   jobgrade           String?
   experience         Int?
@@ -117,89 +116,92 @@ model Driver {
   trips_completed    Int               @default(0)
   dob                DateTime?
   profile_image      String?
-  shift              ShiftsMaster?     @relation(fields: [shift_id], references: [Shift_ID])
   shift_id           String?
   created_on         DateTime          @default(now())
-  updated_at         DateTime          @default(now())
-  current_vehicle    Vehicle?          @relation(fields: [current_vehicle_id], references: [vehicle_id])
   current_vehicle_id String?           @unique
-  tripRequest        TripRequest[]
+  sap_driver_id      String?           @unique
+  updated_at         DateTime          @default(now())
+  driver_type        String?
+  authentication     Auth              @relation(fields: [authentication_id], references: [authentication_id])
+  current_vehicle    Vehicle?          @relation(fields: [current_vehicle_id], references: [vehicle_id])
+  plant_uuid         PlantMaster?      @relation(fields: [plant_uuid_id], references: [plant_uuid_id])
+  shift              ShiftsMaster?     @relation(fields: [shift_id], references: [Shift_ID])
   fuels              Fuel[]
+  handoverReceive    HandoverReceive[]
+  tripRequest        TripRequest[]
   fromHandover       VehicleHandover[] @relation("FromDriverRelation")
   toHandover         VehicleHandover[] @relation("ToDriverRelation")
-  handoverReceive    HandoverReceive[]
 }
 
 model TripRequest {
   trip_id              String       @id
-  sap_trip_id          String?      @unique
-  plant_uuid           PlantMaster? @relation(fields: [plant_uuid_id], references: [plant_uuid_id])
   plant_uuid_id        String?
-  request_number       Int          @default(autoincrement())
-  user                 Users?       @relation(fields: [user_id], references: [user_id])
+  request_number       String?
   user_id              String?
+  userManager_id       String?
   vehicle_type         String?
   purpose              String?
   department           String?
   priority             String?
   passengers_number    Int?
   people               String[]
-  start_time           DateTime?
-  end_time             DateTime?
-  number_of_Days       Int?
   from_destination     String?
   to_destination       String?
   pickup_point         String?
-  drop_point           String?
   trip_type            String?
   status               String       @default("Pending")
-  feedback_message     String?
   comments             String?
-  cancel_Reason       String?
   rating               Int?
   approved_by_manager  Boolean?
-  assigned_car         Vehicle?     @relation(fields: [assigned_car_id], references: [vehicle_id])
   assigned_car_id      String?
-  assigned_driver      Driver?      @relation(fields: [assigned_driver_id], references: [driver_id])
   assigned_driver_id   String?
-  created_on           DateTime     @default(now())
   updated_at           DateTime     @default(now())
-  updated_by           String?
   otp                  Int?
-  odometerStarting     String?
-  odometerEnding       String?
-  fuelStarting         Float?
-  fuelEnding           Float?
-  totalFuelConsumed    Float?
-  totalDistanceCovered Float?
-  actual_trip_start    DateTime?
   actual_trip_end      DateTime?
+  actual_trip_start    DateTime?
+  sap_trip_id          String?      @unique
+  start_time           DateTime?
+  end_time             DateTime?
+  feedback_message     String?
+  number_of_Days       Int?
+  drop_point           String?
+  created_on           DateTime     @default(now())
+  updated_by           String?
+  odometerEnding       String?
+  odometerStarting     String?
+  fuelEnding           Float?
+  fuelStarting         Float?
+  totalDistanceCovered Float?
+  totalFuelConsumed    Float?
+  cancel_Reason        String?
+  assignment_number    String?
   fuels                Fuel[]
+  assigned_car         Vehicle?     @relation(fields: [assigned_car_id], references: [vehicle_id])
+  assigned_driver      Driver?      @relation(fields: [assigned_driver_id], references: [driver_id])
+  plant_uuid           PlantMaster? @relation(fields: [plant_uuid_id], references: [plant_uuid_id])
+  user                 Users?       @relation(fields: [user_id], references: [user_id])
 }
 
 model Fuel {
   id                  String       @id
   currentReading      Float?
   invoiceAmount       Float?
+  fuelStationLocation String?
+  trip_id             String?
   time                DateTime?
+  driver_id           String?
   fuelLoaded          Float?
   currentReadingImage String?      @db.VarChar(255)
   invoiceImage        String?      @db.VarChar(255)
   assigned_driver     Driver?      @relation(fields: [driver_id], references: [driver_id])
-  driver_id           String?
-  fuelStationLocation String?
   trip_uuid           TripRequest? @relation(fields: [trip_id], references: [trip_id])
-  trip_id             String?
 }
 
 model VehicleHandover {
   handover_id            String            @id
   sap_handoverRecieve_id String?           @unique
-  from_driver            Driver            @relation("FromDriverRelation", fields: [from_driver_id], references: [driver_id])
-  to_driver              Driver            @relation("ToDriverRelation", fields: [to_driver_id], references: [driver_id])
   from_driver_id         String
   to_driver_id           String
-  vehicle                Vehicle           @relation(fields: [vehicle_id], references: [vehicle_id])
   vehicle_id             String
   handover_status        String
   Handover               Boolean           @default(false)
@@ -207,44 +209,47 @@ model VehicleHandover {
   created_on             DateTime          @default(now())
   updated_at             DateTime          @default(now())
   hadnoverRecieve        HandoverReceive[]
+  from_driver            Driver            @relation("FromDriverRelation", fields: [from_driver_id], references: [driver_id])
+  to_driver              Driver            @relation("ToDriverRelation", fields: [to_driver_id], references: [driver_id])
+  vehicle                Vehicle           @relation(fields: [vehicle_id], references: [vehicle_id])
 }
 
 model HandoverReceive {
-  handover_id         String          @id
-  vehicle_handover    VehicleHandover @relation(fields: [vehicle_handover_id], references: [handover_id])
-  vehicle_handover_id String
-  driver              Driver          @relation(fields: [driver_id], references: [driver_id])
   driver_id           String
-  handover_type       String
-  created_on          DateTime        @default(now())
-  updated_at          DateTime        @default(now())
-  fuelReading         String?
-  odometerReading     String?
-  message             String?
   vehicle_photos      String[]
   form_photo          String?
-  plant_uuid             String
-  plant_uuid_id          PlantMaster       @relation(fields: [plant_uuid], references: [plant_uuid_id])
-  Vehicle             Vehicle?        @relation(fields: [vehicleVehicle_id], references: [vehicle_id])
+  fuelReading         String?
+  message             String?
+  odometerReading     String?
+  created_on          DateTime        @default(now())
+  handover_id         String          @id
+  handover_type       String
+  updated_at          DateTime        @default(now())
   vehicleVehicle_id   String?
+  vehicle_handover_id String
+  plant_uuid          String
+  driver              Driver          @relation(fields: [driver_id], references: [driver_id])
+  plant_uuid_id       PlantMaster     @relation(fields: [plant_uuid], references: [plant_uuid_id])
+  Vehicle             Vehicle?        @relation(fields: [vehicleVehicle_id], references: [vehicle_id])
+  vehicle_handover    VehicleHandover @relation(fields: [vehicle_handover_id], references: [handover_id])
 }
 
 model Bus {
   busId                 String        @id
   sapBusId              String?       @unique
-  busName               String?
   busRegistrationNumber String?       @unique
+  vehicle_owner_id      String?
+  busName               String?
   busDescription        String?
   vehicle_owner         VehicleOwner? @relation(fields: [vehicle_owner_id], references: [vehicle_owner_id])
-  vehicle_owner_id      String?
   routes                BusRoutes[]
 }
 
 model BusRoutes {
   busRouteId   String  @id
-  bus          Bus     @relation(fields: [busId], references: [busId])
   busId        String
   busRouteName String
   busToOffice  String?
   busToHome    String?
+  bus          Bus     @relation(fields: [busId], references: [busId])
 }

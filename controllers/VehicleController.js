@@ -53,6 +53,7 @@ const createNewVehicle = async (req, res) => {
       vehicle_description,
       vehicle_owner_id,
       vehicle_status,
+      plant_uuid_id,
     } = req.body;
 
     const existingVehicle = await prisma.vehicle.findUnique({
@@ -67,7 +68,6 @@ const createNewVehicle = async (req, res) => {
 
     const vehicle_id = uuidv4();
 
-    // Create a new vehicle record
     const newVehicle = await prisma.vehicle.create({
       data: {
         vehicle_id,
@@ -76,6 +76,7 @@ const createNewVehicle = async (req, res) => {
         vehicle_description,
         vehicle_owner_id,
         vehicle_status,
+        plant_uuid_id,
       },
     });
 
@@ -88,7 +89,11 @@ const createNewVehicle = async (req, res) => {
 
 const getAllVehicle = async (req, res) => {
   try {
+    const { plantId } = req.params;
     const vehicles = await prisma.vehicle.findMany({
+      where: {
+        plant_uuid_id: plantId,
+      },
       include: {
         vehicle_owner: true,
         tripRequest: true,

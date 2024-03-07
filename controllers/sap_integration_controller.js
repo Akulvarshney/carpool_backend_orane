@@ -127,8 +127,8 @@ const importUserSap = async (req, res) => {
   try {
     await Promise.all(
       users.map(async (user) => {
-        // Check if the user role is allowed
         const lowerCaseRole = user.role.toLowerCase();
+        const newEmail = user.emailId.toLowerCase();
 
         if (!allowedRoles.includes(lowerCaseRole)) {
           results.push({
@@ -139,7 +139,7 @@ const importUserSap = async (req, res) => {
         }
 
         const existingAuthUser = await prisma.auth.findUnique({
-          where: { emailId: user.emailId },
+          where: { emailId: newEmail },
         });
 
         if (existingAuthUser) {
@@ -154,9 +154,9 @@ const importUserSap = async (req, res) => {
           const createdAuthUser = await prisma.auth.create({
             data: {
               authentication_id: authenticationId,
-              emailId: user.emailId,
+              emailId: newEmail,
               password: hashedPassword,
-              role: lowerCaseRole, // Store role in lowercase
+              role: lowerCaseRole,
             },
           });
 
@@ -165,11 +165,12 @@ const importUserSap = async (req, res) => {
             data: {
               user_id: userId,
               sap_user_id: user.sap_user_id,
+              sap_Manger_id: user?.sap_Manager_id,
               authentication_id: createdAuthUser.authentication_id,
               name: user.name,
               address: user.address,
               designation: user.designation,
-              dob: new Date(user.dob) || null,
+              dob: user.dob ? new Date(user.dob) : null,
               mobile_number: user.mobile_number,
               plant_uuid_id: user.plant_uuid,
               role: lowerCaseRole,
@@ -240,6 +241,7 @@ const importDriverSap = async (req, res) => {
             sap_driver_id: driverData.sap_driver_id,
             authentication_id: createdAuthDriver.authentication_id,
             driver_employee_id: driverData.driver_employee_id,
+            driver_type: driverData.driver_type,
             emailId: driverData.emailId,
             vehicle_type: { set: driverData.vehicle_type },
             name: driverData.name,
@@ -248,7 +250,7 @@ const importDriverSap = async (req, res) => {
             sex: driverData.sex,
             plant_uuid_id: driverData.plant_uuid_id,
             jobgrade: driverData.jobgrade,
-            shift_id: driverData?.shift_id || "",
+            shift_id: driverData?.shift_id || null,
             dob: new Date(driverData.dob) || null,
             experience: driverData.experience,
           },
@@ -302,7 +304,7 @@ const importVehicleSap = async (req, res) => {
             vehicle_type: vehicleData.vehicle_type,
             vehicle_description: vehicleData.vehicle_description,
             vehicle_owner_id: vehicleData.vehicle_owner_id,
-            // Add other fields as needed
+            plant_uuid_id: vehicleData?.plant_uuid_id,
           },
         });
 

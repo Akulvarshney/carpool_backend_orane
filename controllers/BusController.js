@@ -78,6 +78,30 @@ const fetchRoutesofBus = async (req, res) => {
   }
 };
 
+const fetchSingleBusInfo = async (req, res) => {
+  const { busId } = req.params;
+
+  try {
+    const busInfo = await prisma.bus.findUnique({
+      where: {
+        busId,
+      },
+      include: {
+        vehicle_owner: true,
+      },
+    });
+
+    if (!busInfo) {
+      return res.status(404).json({ error: "Bus not found" });
+    }
+
+    res.json(busInfo);
+  } catch (error) {
+    console.error("Error fetching bus information:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const fetchBusList = async (req, res) => {
   try {
     const buses = await prisma.bus.findMany({
@@ -175,27 +199,46 @@ const deleteBusById = async (req, res) => {
   }
 };
 const updateBusDetail = async (req, res) => {
+  const { busId } = req.params;
+  const { busName, busRegistrationNumber, busDescription } = req.body;
+
   try {
-    const { busId, bus_route_name } = req.body;
     const updatedBus = await prisma.bus.update({
-      where: {
-        busId: busId,
-      },
+      where: { busId },
       data: {
-        //sapBusId: sapBusId,
-        // busRegistrationNumber: busRegistrationNumber,
-        //vehicle_owner_id: vehicle_owner_id,
-        bus_route_name: bus_route_name,
-        //bus_stop: bus_stop,
+        busName,
+        busRegistrationNumber,
+        busDescription,
       },
     });
-    if (!updatedBus) {
-      return res
-        .status(404)
-        .json({ error: "Bus not found for the given busId" });
+
+    res.json(updatedBus);
+  } catch (error) {
+    console.error("Error updating bus information:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const fetchRouteDetail = async (req, res) => {
+  const { busRouteId } = req.params;
+
+  try {
+    const busRoute = await prisma.busRoutes.findUnique({
+      where: { busRouteId },
+      include: {
+        bus: true,
+      },
+    });
+
+    if (!busRoute) {
+      return res.status(404).json({ error: "Bus Route not found" });
     }
-    return res.json({ message: `Updated bus details for busId ${busId}` });
-  } catch (error) {}
+
+    res.json(busRoute);
+  } catch (error) {
+    console.error("Error fetching bus route:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 const addRoutes2 = async (req, res) => {
@@ -231,6 +274,27 @@ const addRoutes2 = async (req, res) => {
   }
 };
 
+const updatebusRoute = async (req, res) => {
+  const { busRouteId } = req.params;
+  const { busRouteName, busToOffice, busToHome } = req.body;
+
+  try {
+    const updatedBusRoute = await prisma.busRoutes.update({
+      where: { busRouteId },
+      data: {
+        busRouteName,
+        busToOffice,
+        busToHome,
+      },
+    });
+
+    res.json(updatedBusRoute);
+  } catch (error) {
+    console.error("Error updating bus route:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   addBus,
   fetchRoutesofBus,
@@ -241,4 +305,7 @@ module.exports = {
   deleteBusById,
   updateBusDetail,
   addRoutes2,
+  fetchSingleBusInfo,
+  fetchRouteDetail,
+  updatebusRoute,
 };

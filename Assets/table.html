@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+
+        margin: 0;
+        padding: 20px;
+      }
+
+      .myComponent {
+        justify-content: center;
+        display: flex;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 80%;
+        margin: 20px auto;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      .border {
+        padding: 20px;
+        border: double green;
+      }
+
+      .underlineStyle {
+        text-decoration: underline;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .Row {
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+        font-weight: 500;
+      }
+
+      .inputFieldsshort {
+        margin: 0px 0px 0px 7px;
+        padding: 0;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 400;
+        font-family: "Hind", sans-serif;
+        background: #fff;
+        border-bottom: 1px solid #ccc;
+        border-top: 0px;
+        border-left: 0px;
+        border-right: 0px;
+        outline: 0;
+        text-transform: capitalize !important;
+      }
+
+      .text {
+        color: red;
+        font-weight: 500;
+      }
+
+      .RowText {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 500;
+        color: red;
+      }
+
+      .Heading {
+        font-size: 20px;
+        color: red;
+        font-weight: 700;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="content-to-convert" class="main">
+      <div style="padding: 20px; border: double #ccc">
+        <div class="myComponent">
+          <img
+            style="width: 60px; aspect-ratio: 1"
+            src="https://firebasestorage.googleapis.com/v0/b/carpool-orane.appspot.com/o/logo.png?alt=media&token=5876ac2f-ea44-4ea1-9374-63e151120439"
+            alt="Ethiopian Electric Power"
+          />
+        </div>
+        <div class="underlineStyle">Fleet Request Details:</div>
+        <div class="Row" style="padding-top: 20px; padding-bottom: 20px">
+          <div>Name of Office: Ethiopian Electric Power</div>
+
+          <div style="display: flex; flex-direction: column">
+            <div>
+              Fleet Request No: <b><u>{{requestNumber}}</u></b>
+            </div>
+            <div>
+              Date: <b><u>{{requestDate}}</u></b>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div>Name of Passenger:</div>
+          <div style="width: 90%">
+            <table>
+              <thead>
+                <tr>
+                  <th>Passenger ID</th>
+                  <th>Passenger Name</th>
+                  <th>Designation</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#people}}
+                <tr>
+                  <td>{{this.passengerID}}</td>
+                  <td>{{this.passengerName}}</td>
+                  <td>{{this.designation}}</td>
+                </tr>
+                {{/people}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="Row">
+          <div>
+            Place To Go: <b><u>{{tripTo}}</u></b>
+          </div>
+          <div>
+            The Reason To Go: <b><u>{{tripPurpose}}</u></b>
+          </div>
+        </div>
+        <div
+          class="underlineStyle"
+          style="padding-top: 10px; padding-bottom: 10px"
+        >
+          Required Date for Service:
+        </div>
+        <div class="Row">
+          <div>
+            From Date: <b><u>{{startDate}}</u></b> Time:
+            <b><u>{{startTime}}</u></b>
+          </div>
+          <div>
+            To Date: <b><u>{{endDate}}</u></b> Time: <b><u>{{endTime}}</u></b>
+          </div>
+        </div>
+        <div class="Row" style="padding-top: 10px; padding-bottom: 10px">
+          <div>
+            Fleet Administrator Name:
+            <input class="inputFieldsshort" name="clauseH" />
+          </div>
+          <div>
+            Signature:
+            <input class="inputFieldsshort" name="clauseH" />
+          </div>
+        </div>
+        <div style="display: flex; gap: 1rem; align-items: center">
+          <div
+            class="underlineStyle"
+            style="padding-top: 10px; padding-bottom: 10px"
+          >
+            Vehicle Assignment Detail
+          </div>
+          <div style="font-weight: 500">
+            (To be filled by Vehicle Administrator Office)
+          </div>
+        </div>
+        <div>
+          <p style="padding-bottom: 10px; font-weight: 500; line-height: 2">
+            License Plate Number <b><u>{{vehicleNumber}}</u></b> Vehicle Type
+            <b><u>{{vehicleType}}</u></b>
+            Mileage
+            <input class="inputFieldsshort" name="clauseH" />
+            the Requestor's work unit
+            <input class="inputFieldsshort" name="clauseH" />
+            the request number
+            <input class="inputFieldsshort" name="clauseH" />
+            will be valid for
+            <input class="inputFieldsshort" name="clauseH" />
+            Days.
+          </p>
+        </div>
+        <div style="padding-bottom: 10px; font-weight: 500">
+          The Vehicle has charged
+          <input class="inputFieldsshort" name="clauseH" />
+          Liters of
+          <input class="inputFieldsshort" name="clauseH" />
+          Fuel.
+        </div>
+        <div style="padding-top: 20px; padding-bottom: 10px; font-weight: 500">
+          Driver's Name <b><u>{{driverName}}</u></b>
+          Identification No.
+          <input class="inputFieldsshort" name="clauseH" />
+        </div>
+        <div style="padding-top: 30px; padding-bottom: 20px; font-weight: 500">
+          Signature
+          <input class="inputFieldsshort" name="clauseH" />
+        </div>
+        <div style="padding-bottom: 10px; font-weight: 500">
+          Fleet Administration Officer Name
+          <input class="inputFieldsshort" name="clauseH" />
+          Signature
+          <input class="inputFieldsshort" name="clauseH" />
+        </div>
+        <div style="font-weight: 500">
+          I confirm with my Signature that I have received and executed the
+          above-mentioned deployment Order
+        </div>
+        <div
+          class="underlineStyle"
+          style="padding-top: 10px; padding-bottom: 10px"
+        >
+          To be filled in the Requested Work Department :
+        </div>
+        <div style="font-weight: 500">
+          The Vehicle arrived for work on
+          <input class="inputFieldsshort" name="clauseH" />
+          day and
+          <input class="inputFieldsshort" name="clauseH" />
+          time and the km reading number is
+          <input class="inputFieldsshort" name="clauseH" />
+          the Vehicle has been filled with
+          <input class="inputFieldsshort" name="clauseH" />
+          liters of extra Fuel and
+          <input class="inputFieldsshort" name="clauseH" />
+          Kg of Engine Oil.
+        </div>
+        <div style="font-weight: 500">
+          Please let us know that the driver returned after finishing his work
+          on
+          <input class="inputFieldsshort" name="clauseH" />
+          day and
+          <input class="inputFieldsshort" name />
+        </div>
+        <div style="padding-top: 20px">
+          <div
+            class="underlineStyle"
+            style="padding-top: 20px; padding-bottom: 20px"
+          >
+            To be filled by the deployment management Officer when the Vehicle
+            is Returned:
+          </div>
+
+          <div style="padding-top: 20px">
+            The Date the Vehicle was returned
+            <input class="inputFieldsshort" name="clauseH" />
+            at Time
+            <input class="inputFieldsshort" name="clauseH" />
+          </div>
+
+          <div style="padding-top: 20px">
+            Fleet Administration officer Name
+            <input class="inputFieldsshort" name="clauseH" />
+            Signature
+            <input class="inputFieldsshort" name="clauseH" />
+          </div>
+
+          <div
+            class="underlineStyle"
+            style="padding-top: 20px; padding-bottom: 20px"
+          >
+            Registration form of fuel used by vehicles used for field work:
+          </div>
+
+          <div style="padding-top: 10px">
+            Driver's Full Name:
+            <input class="inputFieldsshort" name="clauseH" />
+          </div>
+
+          <div style="padding-top: 10px">
+            Identification Number:
+            <input class="inputFieldsshort" name="clauseH" />
+            Mobile Number:
+            <input class="inputFieldsshort" name="clauseH" />
+          </div>
+
+          <div style="padding-top: 10px">
+            License Plate Number:
+            <input class="inputFieldsshort" name="clauseH" />
+            Date of Delivery:
+            <input class="inputFieldsshort" name="clauseH" />
+          </div>
+
+          <div style="padding-top: 20px">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th colspan="9">
+                    <div style="justify-content: center; display: flex">
+                      Fuel extracted from a gas station during field work
+                    </div>
+                  </th>
+                </tr>
+                <tr>
+                  <th>Date</th>
+                  <th>Fuel (Liters)</th>
+                  <th>KM</th>
+                  <th>Location</th>
+                  <th>KM</th>
+                  <th>Fuel (Liters)</th>
+                  <th>KM</th>
+                  <th>Drive signature</th>
+                  <th>Signature</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                  <td>
+                    <div class="text"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

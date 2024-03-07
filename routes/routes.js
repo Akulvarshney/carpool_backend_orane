@@ -72,6 +72,9 @@ const {
   updateBusDetail,
   addRoutes2,
   fetchRoutesofBus,
+  fetchSingleBusInfo,
+  fetchRouteDetail,
+  updatebusRoute,
 } = require("../controllers/BusController");
 const { addFuel, driverFuelList } = require("../controllers/FuelController");
 const {
@@ -84,9 +87,23 @@ const {
   generateTripRequestExcelFilterReport,
   assignedVehicleExcelFilterReport,
   fuelReport,
+  busDetailsReport,
+  generateTripRequestExcelReportMail,
+  assignedVehicleExcelReportMail,
+  generatefeedBackReportMail,
+  generateDriverListExcelMail,
+  shiftListExcelReportMail,
+  handoverRecieveExcelReportMail,
+  busDetailsReportMail,
+  fuelReportMail,
 } = require("../controllers/ReportsController");
 const { uploadImage } = require("../controllers/UploadImageController");
 const multer = require("multer");
+const {
+  sendRequestFormMail,
+  sendRequestForm,
+  sendHandoverForm,
+} = require("../controllers/mails");
 const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
@@ -108,12 +125,12 @@ router.route("/tripDetail/:trip_id").get(tripDetail);
 router.route("/feedback/:trip_id").post(feedback);
 router.route("/userDetail/:user_id").get(fetchUserDetailUserId);
 router.route("/fetchTripsWithStatus").get(fetchTripsWithStatus);
-router.route("/fetchDriverList").get(fetchDriverList);
+router.route("/fetchDriverList/:plantId").get(fetchDriverList);
 router.route("/updateStatus/:tripId").post(updateStatus);
 // router.route("/findDriver").post(findDriver);
 router.route("/approvingTrip").put(approvingTrip);
 router.route("/createNewVehicle").post(createNewVehicle);
-router.route("/getAllVehicle").get(getAllVehicle);
+router.route("/getAllVehicle/:plantId").get(getAllVehicle);
 // router.route("/findAvailableVehicle").post(findAvailableVehicle);
 // router.route("/cancelLesson/:tripId").post(cancelLesson);
 router.route("/driverActualTripTiming/:tripId").post(driverActualTripTiming);
@@ -122,7 +139,7 @@ router.route("/getTripForDriver/:driverId").get(getTripForDriver);
 router.route("/fleetAssigningTrips").post(fleetAssigningTrips);
 router.route("/managerApprovalTrips").get(managerApprovalTrips);
 router.route("/findAvailableVehicle2").post(findAvailableVehicle2);
-router.route("/freeVehicle").get(fetchAllUnlinkedVehicle);
+router.route("/freeVehicle/:plantId").get(fetchAllUnlinkedVehicle);
 router.route("/changeShiftOrVehicle").put(changeShiftOrVehicle);
 router.route("/assignedVehicle").post(assignedVehicle);
 router.route("/allVehicleOwner").get(allVehicleOwner);
@@ -158,6 +175,14 @@ router.route("/addBusRoutes").post(addBusRoutes);
 router.route("/addRoutes2/:busId").post(addRoutes2);
 router.route("/fetchRoutesofBus/:busId").get(fetchRoutesofBus);
 router.route("/fetchBusList").get(fetchBusList);
+router
+  .route("/fetchSingleBusInfo/:busId")
+  .get(fetchSingleBusInfo)
+  .put(updateBusDetail);
+router
+  .route("/fetchRouteDetail/:busRouteId")
+  .get(fetchRouteDetail)
+  .put(updatebusRoute);
 router.route("/deleteStopsByBusId").delete(deleteStopsByBusId);
 router.route("/deleteBusById").delete(deleteBusById);
 
@@ -175,6 +200,22 @@ router.route("/generateDriverListExcel").get(generateDriverListExcel);
 router.route("/shiftListExcelReport").get(shiftListExcelReport);
 router.route("/handoverRecieveExcelReport").get(handoverRecieveExcelReport);
 router.route("/fuelReport").get(fuelReport);
+router.route("/busDetailsReport").get(busDetailsReport);
+
+router
+  .route("/generateTripRequestExcelReportMail")
+  .get(generateTripRequestExcelReportMail);
+router
+  .route("/assignedVehicleExcelReportMail")
+  .get(assignedVehicleExcelReportMail);
+router.route("/generatefeedBackReportMail").get(generatefeedBackReportMail);
+router.route("/generateDriverListExcelMail").get(generateDriverListExcelMail);
+router.route("/shiftListExcelReportMail").get(shiftListExcelReportMail);
+router
+  .route("/handoverRecieveExcelReportMail")
+  .get(handoverRecieveExcelReportMail);
+router.route("/busDetailsReportMail").get(busDetailsReportMail);
+router.route("/fuelReportMail").get(fuelReportMail);
 
 router
   .route("/generateTripRequestExcelFilterReport")
@@ -186,6 +227,12 @@ router
 //Upload Image
 router.route("/uploadImage").post(upload.single("filename"), uploadImage);
 
+router.route("/sendRequestFormMail/:authId").get(sendRequestFormMail);
+
 router.route("/createVehicleOwner").post(createVehicleOwner);
+
+router.route("/sendRequestForm/:tripId/:userEmail").get(sendRequestForm);
+
+router.route("/sendHandoverForm/:handoverId/:userEmail").get(sendHandoverForm);
 
 module.exports = router;
