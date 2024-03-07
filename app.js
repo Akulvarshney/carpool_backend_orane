@@ -36,10 +36,10 @@ const options = {
 
 const httpsServer = https.createServer(options, app);
 
-// httpsServer.listen(port, () => {
-//   console.log(`Server running on https://${domain}:${port}`);
-// });
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+httpsServer.listen(port, () => {
+  console.log(`Server running on https://${domain}:${port}`);
 });
+
+// app.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });
