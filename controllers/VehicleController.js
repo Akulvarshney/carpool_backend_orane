@@ -56,6 +56,8 @@ const createNewVehicle = async (req, res) => {
       plant_uuid_id,
     } = req.body;
 
+    console.log(req.body);
+
     const existingVehicle = await prisma.vehicle.findUnique({
       where: { vehicle_plate },
     });
@@ -67,6 +69,8 @@ const createNewVehicle = async (req, res) => {
     }
 
     const vehicle_id = uuidv4();
+
+    console.log("vehiid", vehicle_id, "plate", vehicle_plate, "type");
 
     const newVehicle = await prisma.vehicle.create({
       data: {
@@ -90,9 +94,12 @@ const createNewVehicle = async (req, res) => {
 const getAllVehicle = async (req, res) => {
   try {
     const { plantId } = req.params;
+
+    console.log("asdasd", plantId);
+
     const vehicles = await prisma.vehicle.findMany({
       where: {
-        plant_uuid_id: plantId,
+        softDelet: false,
       },
       include: {
         vehicle_owner: true,
@@ -100,8 +107,6 @@ const getAllVehicle = async (req, res) => {
         current_drivers: true,
       },
     });
-
-    // console.log(vehicles);
 
     res.json(vehicles);
   } catch (error) {
@@ -126,6 +131,7 @@ const findAvailableVehicle = async (req, res) => {
 
     const availableVehicles = await prisma.vehicle.findMany({
       where: {
+        softDelet: false,
         vehicle_type,
         tripRequest: {
           every: {
@@ -146,10 +152,35 @@ const findAvailableVehicle = async (req, res) => {
   }
 };
 
+const softDeleteVehicle = async (req, res) => {
+  try {
+    const { vehicleId, softDelete } = req.body;
+
+    if (softDelete === undefined) {
+      return res
+        .status(400)
+        .json({ error: "Missing softDelete field in request body" });
+    }
+
+    const updatedVehicle = await prisma.vehicle.update({
+      where: { vehicle_id: vehicleId },
+      data: {
+        softDelet: softDelete,
+      },
+    });
+
+    res.json(updatedVehicle);
+  } catch (error) {
+    console.error("Error updating vehicle softDelete:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   createVehicleOwner,
   allVehicleOwner,
   createNewVehicle,
   getAllVehicle,
   findAvailableVehicle,
+  softDeleteVehicle,
 };

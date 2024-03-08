@@ -457,6 +457,7 @@ const fleetAssigningTrips = async (req, res) => {
     let queryOptions = {
       where: {
         approved_by_manager: true,
+        forwarded: false,
       },
       include: {
         user: true,
@@ -492,6 +493,50 @@ const fleetAssigningTrips = async (req, res) => {
     res.status(200).json(approvedTrips);
   } catch (error) {
     console.error("Error fetching approved trips:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const forwardedList = async (req, res) => {
+  try {
+    const trips = await prisma.tripRequest.findMany({
+      where: {
+        forwarded: true,
+      },
+      include: {
+        user: true,
+        plant_uuid: true,
+      },
+    });
+
+    res.json(trips);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const forwardedTrue = async (req, res) => {
+  try {
+    const { tripId } = req.params;
+    const { forwarded } = req.body;
+
+    if (forwarded === undefined) {
+      return res
+        .status(400)
+        .json({ error: "Missing forwarded field in request body" });
+    }
+
+    const updatedTrip = await prisma.tripRequest.update({
+      where: { trip_id: tripId },
+      data: {
+        forwarded: forwarded,
+      },
+    });
+
+    res.json(updatedTrip);
+  } catch (error) {
+    console.error("Error updating trip:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -650,4 +695,6 @@ module.exports = {
   managerApprovalTrips,
   findAvailableVehicle2,
   assignedVehicle,
+  forwardedList,
+  forwardedTrue,
 };

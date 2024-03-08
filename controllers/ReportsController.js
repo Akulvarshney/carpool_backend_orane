@@ -582,11 +582,11 @@ const assignedVehicleExcelReportMail = async (req, res) => {
     const mailOptions = {
       from: "carpool.orane@gmail.com",
       to: "allenv213@gmail.com",
-      subject: "Trip Requests Report",
+      subject: "assigned_vehicle_report",
       text: "Please find the attached trip requests report.",
       attachments: [
         {
-          filename: "trip_requests_report.xlsx",
+          filename: "assigned_vehicle_report.xlsx",
           content: buffer,
           encoding: "base64",
         },
@@ -875,11 +875,11 @@ const generatefeedBackReportMail = async (req, res) => {
     const mailOptions = {
       from: "carpool.orane@gmail.com",
       to: "allenv213@gmail.com",
-      subject: "Trip Requests Report",
-      text: "Please find the attached trip requests report.",
+      subject: "feed_back_report",
+      text: "Please find the attached report.",
       attachments: [
         {
-          filename: "trip_requests_report.xlsx",
+          filename: "feed_back_report.xlsx",
           content: buffer,
           encoding: "base64",
         },
@@ -1057,11 +1057,11 @@ const generateDriverListExcelMail = async (req, res) => {
     const mailOptions = {
       from: "carpool.orane@gmail.com",
       to: "allenv213@gmail.com",
-      subject: "Trip Requests Report",
-      text: "Please find the attached trip requests report.",
+      subject: "driver_list_report",
+      text: "Please find the attached driver_list_report.",
       attachments: [
         {
-          filename: "trip_requests_report.xlsx",
+          filename: "Driver_List.xlsx",
           content: buffer,
           encoding: "base64",
         },
@@ -1214,11 +1214,11 @@ const shiftListExcelReportMail = async (req, res) => {
     const mailOptions = {
       from: "carpool.orane@gmail.com",
       to: "allenv213@gmail.com",
-      subject: "Trip Requests Report",
-      text: "Please find the attached trip requests report.",
+      subject: "shift_list_report",
+      text: "Please find the attached shift_list_report.",
       attachments: [
         {
-          filename: "trip_requests_report.xlsx",
+          filename: "shift_list_report.xlsx",
           content: buffer,
           encoding: "base64",
         },
@@ -2018,16 +2018,16 @@ const fuelReportMail = async (req, res) => {
     );
     res.setHeader(
       "Content-Disposition",
-      "attachment; filename=driver_list_report.xlsx"
+      "attachment; filename=Fuel_Report.xlsx"
     );
     const mailOptions = {
       from: "carpool.orane@gmail.com",
       to: "allenv213@gmail.com",
-      subject: "Trip Requests Report",
-      text: "Please find the attached trip requests report.",
+      subject: "Fuel_Report",
+      text: "Please find the attached Fuel_Report.",
       attachments: [
         {
-          filename: "trip_requests_report.xlsx",
+          filename: "Fuel_Report.xlsx",
           content: buffer,
           encoding: "base64",
         },
@@ -2105,11 +2105,11 @@ const busDetailsReportMail = async (req, res) => {
     const mailOptions = {
       from: "carpool.orane@gmail.com",
       to: "allenv213@gmail.com",
-      subject: "Trip Requests Report",
-      text: "Please find the attached trip requests report.",
+      subject: "bus_report",
+      text: "Please find the attached bus_report.",
       attachments: [
         {
-          filename: "trip_requests_report.xlsx",
+          filename: "bus_report.xlsx",
           content: buffer2,
           encoding: "base64",
         },
@@ -2215,11 +2215,11 @@ const handoverRecieveExcelReportMail = async (req, res) => {
     const mailOptions = {
       from: "carpool.orane@gmail.com",
       to: "allenv213@gmail.com",
-      subject: "Trip Requests Report",
-      text: "Please find the attached trip requests report.",
+      subject: "VehicleHandoverReport",
+      text: "Please find the attached VehicleHandoverReport.",
       attachments: [
         {
-          filename: "trip_requests_report.xlsx",
+          filename: "VehicleHandoverReport.xlsx",
           content: buffer2,
           encoding: "base64",
         },
@@ -2229,10 +2229,6 @@ const handoverRecieveExcelReportMail = async (req, res) => {
     transporter.sendMail(mailOptions);
 
     res.status(200).json({ message: "Email sent successfully!" });
-    // Write the workbook to the response
-    //await workbook.xlsx.write(res);
-
-    // res.status(200).end();
   } catch (error) {
     console.error("Error generating Excel report:", error);
     res.status(500).json({ error: "Internal Server Error" });

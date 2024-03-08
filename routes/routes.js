@@ -12,6 +12,7 @@ const {
   fetchDriverList,
   fetchAllUnlinkedVehicle,
   changeShiftOrVehicle,
+  softDeleteDriver,
   // addOrUpdateDriverMaster,
 } = require("../controllers/DriverController");
 const { addShift, shiftList } = require("../controllers/ShiftController");
@@ -33,6 +34,8 @@ const {
   managerApprovalTrips,
   findAvailableVehicle2,
   assignedVehicle,
+  forwardedList,
+  forwardedTrue,
 } = require("../controllers/TripController");
 const {
   authenticateToken,
@@ -44,6 +47,7 @@ const {
   getAllVehicle,
   findAvailableVehicle,
   allVehicleOwner,
+  softDeleteVehicle,
 } = require("../controllers/VehicleController");
 const {
   fetchPlantsSap,
@@ -127,6 +131,7 @@ router.route("/userDetail/:user_id").get(fetchUserDetailUserId);
 router.route("/fetchTripsWithStatus").get(fetchTripsWithStatus);
 router.route("/fetchDriverList/:plantId").get(fetchDriverList);
 router.route("/updateStatus/:tripId").post(updateStatus);
+router.route("/forwardedTrue/:tripId").post(forwardedTrue);
 // router.route("/findDriver").post(findDriver);
 router.route("/approvingTrip").put(approvingTrip);
 router.route("/createNewVehicle").post(createNewVehicle);
@@ -138,11 +143,14 @@ router.route("/approveByManager/:tripId").put(approveByManager);
 router.route("/getTripForDriver/:driverId").get(getTripForDriver);
 router.route("/fleetAssigningTrips").post(fleetAssigningTrips);
 router.route("/managerApprovalTrips").get(managerApprovalTrips);
+router.route("/forwardedList").get(forwardedList);
 router.route("/findAvailableVehicle2").post(findAvailableVehicle2);
 router.route("/freeVehicle/:plantId").get(fetchAllUnlinkedVehicle);
 router.route("/changeShiftOrVehicle").put(changeShiftOrVehicle);
 router.route("/assignedVehicle").post(assignedVehicle);
 router.route("/allVehicleOwner").get(allVehicleOwner);
+router.route("/softDeleteVehicle").post(softDeleteVehicle);
+router.route("/softDeleteDriver").post(softDeleteDriver);
 
 //Handover and Recieve
 router.route("/handOver").post(handOverApi);

@@ -99,6 +99,7 @@ const fetchDriverList = async (req, res) => {
     const { plantId } = req.params;
     const drivers = await prisma.driver.findMany({
       where: {
+        softDelet: false,
         plant_uuid_id: plantId,
       },
       include: {
@@ -117,23 +118,26 @@ const fetchAllUnlinkedVehicle = async (req, res) => {
   try {
     const { plantId } = req.params;
 
+    console.log(plantId);
+
     const linkedVehicleIds = await prisma.driver.findMany({
       select: { current_vehicle_id: true },
-      where: { current_vehicle_id: { not: null }, plant_uuid_id: plantId },
+      where: {
+        current_vehicle_id: { not: null },
+        plant_uuid_id: plantId,
+        softDelet: false,
+      },
     });
 
     const unassignedVehicles = await prisma.vehicle.findMany({
       where: {
-        plant_uuid_id: plantId,
-        AND: [
-          {
-            NOT: {
-              vehicle_id: {
-                in: linkedVehicleIds.map((driver) => driver.current_vehicle_id),
-              },
-            },
+        NOT: {
+          vehicle_id: {
+            in: linkedVehicleIds.map((driver) => driver.current_vehicle_id),
           },
-        ],
+        },
+        plant_uuid_id: plantId,
+        softDelet: false,
       },
     });
 
@@ -141,6 +145,30 @@ const fetchAllUnlinkedVehicle = async (req, res) => {
   } catch (error) {
     console.error("Error fetching unlinked vehicles:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const softDeleteDriver = async (req, res) => {
+  try {
+    const { driverId, softDelete } = req.body;
+
+    if (softDelete === undefined) {
+      return res
+        .status(400)
+        .json({ error: "Missing softDelete field in request body" });
+    }
+
+    const updatedDriver = await prisma.driver.update({
+      where: { driver_id: driverId },
+      data: {
+        softDelet: softDelete,
+      },
+    });
+
+    res.json(updatedDriver);
+  } catch (error) {
+    console.error("Error updating driver softDelete:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -193,4 +221,5 @@ module.exports = {
   fetchDriverList,
   fetchAllUnlinkedVehicle,
   changeShiftOrVehicle,
+  softDeleteDriver,
 };

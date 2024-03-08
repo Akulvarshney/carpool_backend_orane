@@ -45,7 +45,6 @@ model ShiftsMaster {
 model Users {
   user_id           String        @id
   authentication_id String        @unique
-  sap_Manger_id     String?      
   name              String        @db.VarChar(255)
   address           String?       @db.VarChar(255)
   triprequested     Int           @default(0)
@@ -58,6 +57,7 @@ model Users {
   plant_uuid_id     String?
   sap_user_id       String?       @unique
   updated_at        DateTime      @default(now())
+  sap_Manger_id     String?
   tripRequest       TripRequest[]
   authentication    Auth          @relation(fields: [authentication_id], references: [authentication_id])
   plant_uuid        PlantMaster?  @relation(fields: [plant_uuid_id], references: [plant_uuid_id])
@@ -84,16 +84,17 @@ model Vehicle {
   vehicle_plate       String            @unique
   vehicle_type        String            @db.VarChar(50)
   vehicle_description String?           @db.VarChar(255)
-  plant_uuid_id       String?           @db.VarChar(255)
   vehicle_owner_id    String?
+  softDelet           Boolean           @default(false)
   vehicle_status      String?           @default("Available")
   sap_vehicle_id      String?           @unique
   created_on          DateTime          @default(now())
   updated_at          DateTime          @default(now())
+  plant_uuid_id       String?            @db.VarChar(255)
   current_drivers     Driver?
   handoverReceive     HandoverReceive[]
   tripRequest         TripRequest[]
-  plant_uuid          PlantMaster?      @relation(fields: [plant_uuid_id], references: [plant_uuid_id])
+  plant_uuid          PlantMaster?       @relation(fields: [plant_uuid_id], references: [plant_uuid_id])
   vehicle_owner       VehicleOwner?     @relation(fields: [vehicle_owner_id], references: [vehicle_owner_id])
   vehicleHandover     VehicleHandover[]
 }
@@ -103,6 +104,7 @@ model Driver {
   authentication_id  String            @unique
   emailId            String
   vehicle_type       String[]
+  softDelet          Boolean           @default(false)
   name               String?
   mobile_number      String?
   location           String?
@@ -138,7 +140,6 @@ model TripRequest {
   plant_uuid_id        String?
   request_number       String?
   user_id              String?
-  userManager_id       String?
   vehicle_type         String?
   purpose              String?
   department           String?
@@ -153,6 +154,7 @@ model TripRequest {
   comments             String?
   rating               Int?
   approved_by_manager  Boolean?
+  forwarded            Boolean      @default(false)
   assigned_car_id      String?
   assigned_driver_id   String?
   updated_at           DateTime     @default(now())
@@ -175,6 +177,7 @@ model TripRequest {
   totalFuelConsumed    Float?
   cancel_Reason        String?
   assignment_number    String?
+  userManager_id       String?
   fuels                Fuel[]
   assigned_car         Vehicle?     @relation(fields: [assigned_car_id], references: [vehicle_id])
   assigned_driver      Driver?      @relation(fields: [assigned_driver_id], references: [driver_id])
