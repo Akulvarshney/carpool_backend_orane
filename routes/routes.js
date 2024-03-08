@@ -13,6 +13,7 @@ const {
   fetchAllUnlinkedVehicle,
   changeShiftOrVehicle,
   softDeleteDriver,
+  editDriver,
   // addOrUpdateDriverMaster,
 } = require("../controllers/DriverController");
 const { addShift, shiftList } = require("../controllers/ShiftController");
@@ -151,6 +152,7 @@ router.route("/assignedVehicle").post(assignedVehicle);
 router.route("/allVehicleOwner").get(allVehicleOwner);
 router.route("/softDeleteVehicle").post(softDeleteVehicle);
 router.route("/softDeleteDriver").post(softDeleteDriver);
+router.route("/editDriver/:driverId").put(editDriver);
 
 //Handover and Recieve
 router.route("/handOver").post(handOverApi);

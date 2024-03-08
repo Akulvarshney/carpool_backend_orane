@@ -156,6 +156,8 @@ const softDeleteVehicle = async (req, res) => {
   try {
     const { vehicleId, softDelete } = req.body;
 
+    console.log(vehicleId, softDelete);
+
     if (softDelete === undefined) {
       return res
         .status(400)

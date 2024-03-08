@@ -216,10 +216,28 @@ const changeShiftOrVehicle = async (req, res) => {
   }
 };
 
+const editDriver = async (req, res) => {
+  try {
+    const { driverId } = req.params;
+    const updatedInfo = req.body;
+
+    const updatedDriver = await prisma.driver.update({
+      where: { driver_id: driverId },
+      data: updatedInfo,
+    });
+
+    res.json(updatedDriver);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   addDriver,
   fetchDriverList,
   fetchAllUnlinkedVehicle,
   changeShiftOrVehicle,
   softDeleteDriver,
+  editDriver,
 };
