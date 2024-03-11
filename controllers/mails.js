@@ -34,8 +34,9 @@ fs.readFile(
 );
 
 async function generatePDF(htmlContent) {
+  let browser;
   try {
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       args: ["--no-sandbox"],
     });
     const page = await browser.newPage();
