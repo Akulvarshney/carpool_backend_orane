@@ -549,22 +549,40 @@ const findAvailableVehicle2 = async (req, res) => {
       where: {
         plant_uuid_id: plantId,
         vehicle_status: "Available",
-        tripRequest: {
-          none: {
-            OR: [
-              {
-                start_time: { lte: end_time },
-                end_time: { gte: start_time },
-              },
-              {
+        OR: [
+          {
+            tripRequest: {
+              none: {
                 AND: [
-                  { start_time: { lte: end_time } },
-                  { end_time: { gte: start_time } },
+                  {
+                    OR: [
+                      {
+                        start_time: { lte: end_time },
+                        end_time: { gte: start_time },
+                      },
+                      {
+                        AND: [
+                          { start_time: { lte: end_time } },
+                          { end_time: { gte: start_time } },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    status: { not: "Completed" },
+                  },
                 ],
               },
-            ],
+            },
           },
-        },
+          {
+            tripRequest: {
+              some: {
+                status: { in: ["Completed", "Cancelled"] },
+              },
+            },
+          },
+        ],
       },
     });
 
