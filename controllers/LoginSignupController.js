@@ -289,10 +289,55 @@ const firstTimePassword = async (req, res) => {
   }
 };
 
+const fleetDashboard = async (req, res) => {
+  try {
+    const { plant_uuid_id } = req.params;
+    console.log(plant_uuid_id);
+
+    const trips = await prisma.tripRequest.findMany({
+      where: {
+        plant_uuid_id: plant_uuid_id,
+      },
+    });
+
+    const statusCounts = {
+      Requested: 0,
+      Cancelled: 0,
+      Assigned: 0,
+    };
+
+    const priorityCounts = {
+      Emergency: 0,
+      Urgent: 0,
+      Normal: 0,
+    };
+
+    let forwardedRequestedCount = 0;
+
+    trips.forEach((trip) => {
+      const status = trip?.status;
+      statusCounts[status] = (statusCounts[status] || 0) + 1;
+
+      const priority = trip?.priority;
+      priorityCounts[priority] = (priorityCounts[priority] || 0) + 1;
+
+      if (trip?.forwarded && status === "Requested") {
+        forwardedRequestedCount += 1;
+      }
+    });
+
+    res.json({ statusCounts, priorityCounts, forwardedRequestedCount });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   signupEmpMan,
   register_User,
   fetchUserDetailUserId,
   login,
   firstTimePassword,
+  fleetDashboard,
 };

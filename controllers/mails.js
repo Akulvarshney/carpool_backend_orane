@@ -202,6 +202,7 @@ const sendRequestForm = async (req, res) => {
       driverName: tripRequest?.assigned_driver?.name,
       vehicleNumber: tripRequest?.assigned_car?.vehicle_plate,
       vehicleType: tripRequest?.assigned_car?.vehicle_type,
+      managerName: tripRequest?.updated_by,
     });
 
     const pdfBuffer = await generatePDF(htmlContent);

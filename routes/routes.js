@@ -5,6 +5,7 @@ const {
   fetchUserDetailUserId,
   login,
   firstTimePassword,
+  fleetDashboard,
 } = require("../controllers/LoginSignupController");
 const { addPlant, plantList } = require("../controllers/PlantController");
 const {
@@ -49,6 +50,8 @@ const {
   findAvailableVehicle,
   allVehicleOwner,
   softDeleteVehicle,
+  updateVehicleDetail,
+  fetchVehicleDetail,
 } = require("../controllers/VehicleController");
 const {
   fetchPlantsSap,
@@ -153,6 +156,9 @@ router.route("/allVehicleOwner").get(allVehicleOwner);
 router.route("/softDeleteVehicle").post(softDeleteVehicle);
 router.route("/softDeleteDriver").post(softDeleteDriver);
 router.route("/editDriver/:driverId").put(editDriver);
+router.route("/updateVehicleDetail/:vehicleId").put(updateVehicleDetail);
+router.route("/fetchVehicleDetail/:vehicleId").get(fetchVehicleDetail);
+router.route("/fleetDashboard/:plant_uuid_id").get(fleetDashboard);
 
 //Handover and Recieve
 router.route("/handOver").post(handOverApi);
@@ -213,19 +219,25 @@ router.route("/fuelReport").get(fuelReport);
 router.route("/busDetailsReport").get(busDetailsReport);
 
 router
-  .route("/generateTripRequestExcelReportMail")
+  .route("/generateTripRequestExcelReportMail/:userEmail")
   .get(generateTripRequestExcelReportMail);
 router
-  .route("/assignedVehicleExcelReportMail")
+  .route("/assignedVehicleExcelReportMail/:userEmail")
   .get(assignedVehicleExcelReportMail);
-router.route("/generatefeedBackReportMail").get(generatefeedBackReportMail);
-router.route("/generateDriverListExcelMail").get(generateDriverListExcelMail);
-router.route("/shiftListExcelReportMail").get(shiftListExcelReportMail);
 router
-  .route("/handoverRecieveExcelReportMail")
+  .route("/generatefeedBackReportMail/:userEmail")
+  .get(generatefeedBackReportMail);
+router
+  .route("/generateDriverListExcelMail/:userEmail")
+  .get(generateDriverListExcelMail);
+router
+  .route("/shiftListExcelReportMail/:userEmail")
+  .get(shiftListExcelReportMail);
+router
+  .route("/handoverRecieveExcelReportMail/:userEmail")
   .get(handoverRecieveExcelReportMail);
-router.route("/busDetailsReportMail").get(busDetailsReportMail);
-router.route("/fuelReportMail").get(fuelReportMail);
+router.route("/busDetailsReportMail/:userEmail").get(busDetailsReportMail);
+router.route("/fuelReportMail/:userEmail").get(fuelReportMail);
 
 router
   .route("/generateTripRequestExcelFilterReport")

@@ -27,11 +27,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const writeFileAsync = promisify(fs.writeFile);
-
 const app = initializeApp(config.firebaseConfig);
 
-// Get a reference to the Firebase Storage service
 const storage = getStorage(app);
 
 const generateTripRequestExcelReport = async (req, res) => {
@@ -166,6 +163,7 @@ const generateTripRequestExcelReport = async (req, res) => {
 
 const generateTripRequestExcelReportMail = async (req, res) => {
   try {
+    const { userEmail } = req.params;
     const tripRequests = await prisma.tripRequest.findMany({
       include: {
         plant_uuid: { select: { plant_name: true } },
@@ -278,7 +276,7 @@ const generateTripRequestExcelReportMail = async (req, res) => {
 
     const mailOptions = {
       from: "carpool.orane@gmail.com",
-      to: "allenv213@gmail.com",
+      to: userEmail,
       subject: "Trip Requests Report",
       text: "Please find the attached trip requests report.",
       attachments: [
@@ -450,6 +448,7 @@ const assignedVehicleExcelReport = async (req, res) => {
 
 const assignedVehicleExcelReportMail = async (req, res) => {
   try {
+    const { userEmail } = req.params;
     const tripRequests = await prisma.tripRequest.findMany({
       where: {
         assigned_car_id: {
@@ -581,7 +580,7 @@ const assignedVehicleExcelReportMail = async (req, res) => {
 
     const mailOptions = {
       from: "carpool.orane@gmail.com",
-      to: "allenv213@gmail.com",
+      to: userEmail,
       subject: "assigned_vehicle_report",
       text: "Please find the attached trip requests report.",
       attachments: [
@@ -748,6 +747,7 @@ const generatefeedBackReport = async (req, res) => {
 
 const generatefeedBackReportMail = async (req, res) => {
   try {
+    const { userEmail } = req.params;
     const tripRequests = await prisma.tripRequest.findMany({
       where: {
         status: "Completed",
@@ -874,7 +874,7 @@ const generatefeedBackReportMail = async (req, res) => {
 
     const mailOptions = {
       from: "carpool.orane@gmail.com",
-      to: "allenv213@gmail.com",
+      to: userEmail,
       subject: "feed_back_report",
       text: "Please find the attached report.",
       attachments: [
@@ -985,6 +985,7 @@ const generateDriverListExcel = async (req, res) => {
 
 const generateDriverListExcelMail = async (req, res) => {
   try {
+    const { userEmail } = req.params;
     const drivers = await prisma.driver.findMany({
       include: {
         current_vehicle: true,
@@ -1056,7 +1057,7 @@ const generateDriverListExcelMail = async (req, res) => {
 
     const mailOptions = {
       from: "carpool.orane@gmail.com",
-      to: "allenv213@gmail.com",
+      to: userEmail,
       subject: "driver_list_report",
       text: "Please find the attached driver_list_report.",
       attachments: [
@@ -1154,6 +1155,7 @@ const shiftListExcelReport = async (req, res) => {
 
 const shiftListExcelReportMail = async (req, res) => {
   try {
+    const { userEmail } = req.params;
     // Fetch data from the database (replace this with your actual database connection)
     const shiftList = await prisma.shiftsMaster.findMany();
     console.log("1111111111111111111111111111111111111111", shiftList);
@@ -1213,7 +1215,7 @@ const shiftListExcelReportMail = async (req, res) => {
 
     const mailOptions = {
       from: "carpool.orane@gmail.com",
-      to: "allenv213@gmail.com",
+      to: userEmail,
       subject: "shift_list_report",
       text: "Please find the attached shift_list_report.",
       attachments: [
@@ -1948,6 +1950,7 @@ const handoverRecieveExcelReport = async (req, res) => {
 
 const fuelReportMail = async (req, res) => {
   try {
+    const { userEmail } = req.params;
     const fuelList = await prisma.fuel.findMany({
       include: {
         assigned_driver: true,
@@ -2022,7 +2025,7 @@ const fuelReportMail = async (req, res) => {
     );
     const mailOptions = {
       from: "carpool.orane@gmail.com",
-      to: "allenv213@gmail.com",
+      to: userEmail,
       subject: "Fuel_Report",
       text: "Please find the attached Fuel_Report.",
       attachments: [
@@ -2045,6 +2048,7 @@ const fuelReportMail = async (req, res) => {
 
 const busDetailsReportMail = async (req, res) => {
   try {
+    const { userEmail } = req.params;
     // Fetch data from the database based on your requirements
     const busesWithRoutes = await prisma.bus.findMany({
       include: {
@@ -2104,7 +2108,7 @@ const busDetailsReportMail = async (req, res) => {
 
     const mailOptions = {
       from: "carpool.orane@gmail.com",
-      to: "allenv213@gmail.com",
+      to: userEmail,
       subject: "bus_report",
       text: "Please find the attached bus_report.",
       attachments: [
@@ -2127,6 +2131,8 @@ const busDetailsReportMail = async (req, res) => {
 
 const handoverRecieveExcelReportMail = async (req, res) => {
   try {
+    const { userEmail } = req.params;
+    console.log(userEmail);
     const vehicleHandovers = await prisma.vehicleHandover.findMany({
       orderBy: {
         created_on: "desc",
@@ -2214,7 +2220,7 @@ const handoverRecieveExcelReportMail = async (req, res) => {
 
     const mailOptions = {
       from: "carpool.orane@gmail.com",
-      to: "allenv213@gmail.com",
+      to: userEmail,
       subject: "VehicleHandoverReport",
       text: "Please find the attached VehicleHandoverReport.",
       attachments: [

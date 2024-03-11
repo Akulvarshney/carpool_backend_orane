@@ -178,6 +178,62 @@ const softDeleteVehicle = async (req, res) => {
   }
 };
 
+const updateVehicleDetail = async (req, res) => {
+  const { vehicleId } = req.params;
+  const { vehicle_plate, vehicle_type, vehicle_description, vehicle_owner_id } =
+    req.body;
+
+  try {
+    // Update the vehicle details
+    const updatedVehicle = await prisma.vehicle.update({
+      where: {
+        vehicle_id: vehicleId,
+      },
+      data: {
+        vehicle_plate,
+        vehicle_type,
+        vehicle_description,
+        vehicle_owner_id,
+      },
+    });
+
+    res.json(updatedVehicle);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const fetchVehicleDetail = async (req, res) => {
+  const { vehicleId } = req.params;
+
+  try {
+    // Fetch the vehicle details with associated data
+    const vehicleDetails = await prisma.vehicle.findUnique({
+      where: {
+        vehicle_id: vehicleId,
+      },
+      include: {
+        plant_uuid: true,
+        vehicle_owner: true,
+        current_drivers: true,
+        handoverReceive: true,
+        tripRequest: true,
+        vehicleHandover: true,
+      },
+    });
+
+    if (!vehicleDetails) {
+      return res.status(404).json({ error: "Vehicle not found" });
+    }
+
+    res.json(vehicleDetails);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   createVehicleOwner,
   allVehicleOwner,
@@ -185,4 +241,6 @@ module.exports = {
   getAllVehicle,
   findAvailableVehicle,
   softDeleteVehicle,
+  updateVehicleDetail,
+  fetchVehicleDetail,
 };
