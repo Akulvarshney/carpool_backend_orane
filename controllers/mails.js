@@ -220,7 +220,7 @@ const sendRequestForm = async (req, res) => {
 
     await fs.promises.writeFile(attachmentFilePath, pdfBuffer);
 
-    const emailSubject = "Trip Request PDF";
+    const emailSubject = `Trip Request PDF for ${tripRequest?.request_number}`;
     const emailBody = `Dear Fleet Administrator,
     I trust this message finds you well. This mail is to submit a request form that requires your attention. Attached to this email is a PDF document containing the necessary details for your review and completion.
     

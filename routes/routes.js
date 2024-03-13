@@ -52,6 +52,7 @@ const {
   softDeleteVehicle,
   updateVehicleDetail,
   fetchVehicleDetail,
+  changeVehicleStatus,
 } = require("../controllers/VehicleController");
 const {
   fetchPlantsSap,
@@ -159,6 +160,9 @@ router.route("/editDriver/:driverId").put(editDriver);
 router.route("/updateVehicleDetail/:vehicleId").put(updateVehicleDetail);
 router.route("/fetchVehicleDetail/:vehicleId").get(fetchVehicleDetail);
 router.route("/fleetDashboard/:plant_uuid_id").get(fleetDashboard);
+router
+  .route("/changeVehicleStatus/:vehicleId/:newStatus")
+  .put(changeVehicleStatus);
 
 //Handover and Recieve
 router.route("/handOver").post(handOverApi);
@@ -199,8 +203,8 @@ router
   .route("/fetchRouteDetail/:busRouteId")
   .get(fetchRouteDetail)
   .put(updatebusRoute);
-router.route("/deleteStopsByBusId").delete(deleteStopsByBusId);
-router.route("/deleteBusById").delete(deleteBusById);
+router.route("/deleteStopsByBusId/:busRouteId").delete(deleteStopsByBusId);
+router.route("/deleteBusById/:busId").delete(deleteBusById);
 
 //Fuel
 router.route("/addFuel").post(addFuel);

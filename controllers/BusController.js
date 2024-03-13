@@ -5,7 +5,7 @@ const { v4: uuidv4, validate: isUuid } = require("uuid");
 
 const addBus = async (req, res) => {
   try {
-    const { busName, busRegistrationNumber, ownerId, description } = req.body;
+    const { busName, busRegistrationNumber, description } = req.body;
 
     const existingBus = await prisma.bus.findUnique({
       where: {
@@ -27,7 +27,6 @@ const addBus = async (req, res) => {
         busName,
         busRegistrationNumber,
         busDescription: description,
-        vehicle_owner_id: ownerId,
       },
     });
 
@@ -156,48 +155,57 @@ const getStopByBusId = async (req, res) => {
 
 const deleteStopsByBusId = async (req, res) => {
   try {
-    const { busId } = req.body;
-    const deletedBusStops = await prisma.bus.update({
-      where: {
-        busId: busId,
-      },
-      data: {
-        bus_stop: null, // Remove all bus stops for the specified busId
-      },
+    const { busRouteId } = req.params;
+
+    const existingBusRoute = await prisma.busRoutes.findUnique({
+      where: { busRouteId: busRouteId },
     });
 
-    if (!deletedBusStops) {
-      return res
-        .status(404)
-        .json({ error: "Bus not found for the given busId" });
+    if (!existingBusRoute) {
+      return res.status(404).json({ error: "BusRoute not found" });
     }
 
-    return res.json({ message: `Deleted bus stops for busId ${busId}` });
+    await prisma.busRoutes.delete({
+      where: { busRouteId: existingBusRoute.busRouteId },
+    });
+
+    return res.json({ message: "BusRoute deleted successfully" });
   } catch (error) {
-    console.error("Error fetching drivers:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 const deleteBusById = async (req, res) => {
   try {
-    const { busId } = req.body;
-    const deletedBus = await prisma.bus.delete({
-      where: {
-        busId: busId,
-      },
+    const { busId } = req.params;
+
+    const existingBus = await prisma.bus.findUnique({
+      where: { busId: busId },
+      include: { routes: true },
     });
-    if (!deletedBus) {
-      return res
-        .status(404)
-        .json({ error: "Bus not found for the given busId" });
+
+    if (!existingBus) {
+      return res.status(404).json({ error: "Bus not found" });
     }
-    return res.json({ message: `Deleted bus with busId ${busId}` });
+
+    await prisma.busRoutes.deleteMany({
+      where: { busId: existingBus.busId },
+    });
+
+    await prisma.bus.delete({
+      where: { busId: existingBus.busId },
+    });
+
+    return res.json({
+      message: "Bus and its corresponding BusRoutes deleted successfully",
+    });
   } catch (error) {
-    console.error("Error fetching drivers:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 const updateBusDetail = async (req, res) => {
   const { busId } = req.params;
   const { busName, busRegistrationNumber, busDescription } = req.body;
